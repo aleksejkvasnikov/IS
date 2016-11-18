@@ -84,12 +84,24 @@ bool MainWindow::mycontains(QList<MyPoint*> list, MyPoint* point) // функц�
      {
          if ((point->x == (*i)->x) && (point->y == (*i)->y))
          {
+             point->g = (*i)->g;
              val = true;
          }
      }
      return val;
 }
-
+MyPoint* MainWindow::getmypoint(QList<MyPoint*> list, MyPoint* point) // функция ЧТОБЫ ВЕРНУТЬ МНЕ ССЫЛКУ НА МОЙ ОБЪЕКТ
+{
+     QList<MyPoint*>::iterator i;
+     for (i = list.begin(); i != list.end(); ++ i)
+     {
+         if ((point->x == (*i)->x) && (point->y == (*i)->y))
+         {
+             point = (*i);
+         }
+     }
+     return point;
+}
 MyPoint* MainWindow::getPoint(int x, int y) // создание соседей
 {
     MyPoint* newPoint = new MyPoint(x,y);
@@ -178,6 +190,7 @@ void MainWindow::on_pushButton_5_clicked()
                 {
                     continue;
                 }
+
                 if (!mycontains(openlist, child))
                 {
                     child->setParent(current);
@@ -185,8 +198,8 @@ void MainWindow::on_pushButton_5_clicked()
                     child->f = child->g + child->getHScore(fpoint, ui->comboBox->currentIndex());
                        openlist.push_back(child);
                 }else if (tentativeScore  < child->getGScore()){
-                     child->setParent(current);
-                     child->g = tentativeScore;
+                     getmypoint(openlist,child)->setParent(current);
+                     getmypoint(openlist,child)->g = tentativeScore;
                 }
             }
         }
@@ -194,14 +207,14 @@ void MainWindow::on_pushButton_5_clicked()
         for (i = openlist.begin(); i != openlist.end(); ++ i)
         {
             QString str;
-            QTextStream(&str) << (*i)->x << ", " << (*i)->y;
+            QTextStream(&str) << (*i)->x+1 << ", " << (*i)->y+1;
             ui->textBrowser->append(str);
         }
         ui->textBrowser->append("Closed list");
         for (i = closedList.begin(); i != closedList.end(); ++ i)
         {
             QString str;
-            QTextStream(&str) << (*i)->x << ", " << (*i)->y;
+            QTextStream(&str) << (*i)->x+1 << ", " << (*i)->y+1;
             ui->textBrowser->append(str);
         }
     ui->textBrowser->append("Next iteration");
